@@ -25,7 +25,7 @@ type Lead = {
   description: string
 }
 
-type Despacho = {
+type empresa = {
   id: string
   name: string
   email: string
@@ -41,14 +41,14 @@ type Stats = {
     nuevos: number
     reclamados: number
     conversion: number
-    despachos: number
+    empresas: number
     activos: number
   }
   byCategory: { cat: string; total: number; won: number }[]
   byStatus: { status: string; label: string; count: number }[]
   last7: { date: string; count: number }[]
   leads: Lead[]
-  despachos: Despacho[]
+  empresas: empresa[]
 }
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string; dot: string }> = {
@@ -91,7 +91,7 @@ function CatBadge({ cat }: { cat: string }) {
 const NAV = [
   { id: 'overview', label: 'Resumen', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
   { id: 'leads', label: 'Leads', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
-  { id: 'despachos', label: 'Despachos', icon: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z' },
+  { id: 'empresas', label: 'empresas', icon: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z' },
   { id: 'suscripciones', label: 'Suscripciones', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
 ]
 
@@ -115,8 +115,8 @@ export default function AdminPanel() {
     router.push('/login')
   }
 
-  async function toggleDespacho(id: string, active: boolean) {
-    await fetch(`/api/despachos/${id}`, {
+  async function toggleempresa(id: string, active: boolean) {
+    await fetch(`/api/empresas/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ active })
@@ -210,7 +210,7 @@ export default function AdminPanel() {
                       { label: 'Total leads', val: stats.totals.leads, sub: 'registrados', color: '#6366F1', bg: '#EEF2FF', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
                       { label: 'Sin reclamar', val: stats.totals.nuevos, sub: 'pendientes', color: '#F59E0B', bg: '#FFFBEB', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
                       { label: 'Tasa conversión', val: `${stats.totals.conversion}%`, sub: 'leads cerrados', color: '#10B981', bg: '#ECFDF5', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-                      { label: 'Despachos activos', val: stats.totals.activos, sub: `de ${stats.totals.despachos} total`, color: '#8B5CF6', bg: '#F5F3FF', icon: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z' },
+                      { label: 'empresas activos', val: stats.totals.activos, sub: `de ${stats.totals.empresas} total`, color: '#8B5CF6', bg: '#F5F3FF', icon: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z' },
                     ].map(s => (
                       <div key={s.label} style={{ background: '#fff', border: '1px solid #F1F5F9', borderRadius: 14, padding: '20px' }}>
                         <div style={{ width: 40, height: 40, background: s.bg, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
@@ -367,19 +367,19 @@ export default function AdminPanel() {
                 </div>
               )}
 
-              {/* DESPACHOS */}
-              {section === 'despachos' && (
+              {/* empresaS */}
+              {section === 'empresas' && (
                 <div style={{ background: '#fff', border: '1px solid #F1F5F9', borderRadius: 14, overflow: 'hidden' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                        {['Despacho', 'Especialidades', 'Localización', 'Usuario', 'Estado', ''].map(h => (
+                        {['empresa', 'Especialidades', 'Localización', 'Usuario', 'Estado', ''].map(h => (
                           <th key={h} style={{ padding: '14px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {stats.despachos.map(d => (
+                      {stats.empresas.map(d => (
                         <tr key={d.id} style={{ borderBottom: '1px solid #F8FAFC' }}>
                           <td style={{ padding: '14px 16px' }}>
                             <div style={{ fontWeight: 700, color: '#0F172A' }}>{d.name}</div>
@@ -408,7 +408,7 @@ export default function AdminPanel() {
                             </span>
                           </td>
                           <td style={{ padding: '14px 16px' }}>
-                            <button onClick={() => toggleDespacho(d.id, !d.active)}
+                            <button onClick={() => toggleempresa(d.id, !d.active)}
                               style={{ padding: '6px 12px', borderRadius: 7, border: '1px solid #E2E8F0', background: '#fff', fontSize: 12, fontWeight: 600, color: d.active ? '#EF4444' : '#059669', cursor: 'pointer' }}>
                               {d.active ? 'Desactivar' : 'Activar'}
                             </button>
@@ -427,7 +427,7 @@ export default function AdminPanel() {
                     <div style={{ padding: '20px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
                         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>Suscripciones y pagos</h3>
-                        <p style={{ fontSize: 13, color: '#94A3B8', margin: '4px 0 0' }}>Gestión de planes por despacho</p>
+                        <p style={{ fontSize: 13, color: '#94A3B8', margin: '4px 0 0' }}>Gestión de planes por empresa</p>
                       </div>
                       <span style={{ background: '#EEF2FF', color: '#6366F1', border: '1px solid #C7D2FE', borderRadius: 20, padding: '4px 12px', fontSize: 12, fontWeight: 600 }}>
                         Próximamente con Stripe
@@ -436,13 +436,13 @@ export default function AdminPanel() {
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                          {['Despacho', 'Plan', 'Leads este mes', 'Facturación', 'Próximo pago', 'Estado'].map(h => (
+                          {['empresa', 'Plan', 'Leads este mes', 'Facturación', 'Próximo pago', 'Estado'].map(h => (
                             <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {stats.despachos.map((d, i) => {
+                        {stats.empresas.map((d, i) => {
                           const plans = ['Básico', 'Profesional', 'Enterprise']
                           const prices = ['49€/mes', '99€/mes', '199€/mes']
                           const leadsCount = stats.leads.filter(l => l.assigned_to === d.id).length
@@ -477,7 +477,7 @@ export default function AdminPanel() {
                     {[
                       { label: 'MRR estimado', val: `${stats.totals.activos * 99}€`, sub: 'ingresos mensuales', color: '#10B981', bg: '#ECFDF5' },
                       { label: 'Leads facturados', val: stats.totals.reclamados, sub: 'leads reclamados', color: '#6366F1', bg: '#EEF2FF' },
-                      { label: 'Despachos activos', val: stats.totals.activos, sub: 'con suscripción', color: '#8B5CF6', bg: '#F5F3FF' },
+                      { label: 'empresas activos', val: stats.totals.activos, sub: 'con suscripción', color: '#8B5CF6', bg: '#F5F3FF' },
                     ].map(s => (
                       <div key={s.label} style={{ background: '#fff', border: '1px solid #F1F5F9', borderRadius: 14, padding: '20px' }}>
                         <div style={{ fontSize: 30, fontWeight: 800, color: s.color, marginBottom: 4 }}>{s.val}</div>

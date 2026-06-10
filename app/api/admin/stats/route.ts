@@ -1,13 +1,13 @@
 import { supabase } from '../../../../lib/supabase'
 
 export async function GET() {
-  const [leadsRes, despachoRes] = await Promise.all([
+  const [leadsRes, empresaRes] = await Promise.all([
     supabase.from('leads').select('*'),
-    supabase.from('despachos').select('*'),
+    supabase.from('empresas').select('*'),
   ])
 
   const leads = leadsRes.data ?? []
-  const despachos = despachoRes.data ?? []
+  const empresas = empresaRes.data ?? []
 
   const byCategory = ['Jurídico', 'Inmobiliario', 'Reformas', 'Seguros'].map(cat => ({
     cat,
@@ -38,13 +38,13 @@ export async function GET() {
       nuevos: leads.filter(l => l.status === 'new').length,
       reclamados: leads.filter(l => l.assigned_to).length,
       conversion: leads.length ? Math.round(leads.filter(l => l.status === 'closed_won').length / leads.length * 100) : 0,
-      despachos: despachos.length,
-      activos: despachos.filter(d => d.active).length,
+      empresas: empresas.length,
+      activos: empresas.filter(d => d.active).length,
     },
     byCategory,
     byStatus,
     last7,
     leads: leads.slice(0, 50),
-    despachos,
+    empresas,
   })
 }

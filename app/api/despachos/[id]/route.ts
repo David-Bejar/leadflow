@@ -9,7 +9,7 @@ export async function PATCH(
   const body = await request.json()
 
   const { data, error } = await supabase
-    .from('despachos')
+    .from('empresas')
     .update(body)
     .eq('id', id)
     .select()

@@ -20,7 +20,7 @@ export async function POST(
 
   const { data, error } = await supabase
     .from('leads')
-    .update({ assigned_to: body.despachoId, status: 'assigned' })
+    .update({ assigned_to: body.empresaId, status: 'assigned' })
     .eq('id', id)
     .select()
     .single()
@@ -30,7 +30,7 @@ export async function POST(
   await supabase.from('lead_events').insert({
     lead_id: id,
     type: 'claimed',
-    despacho_id: body.despachoId,
+    empresa_id: body.empresaId,
   })
 
   return Response.json(data)

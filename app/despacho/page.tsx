@@ -20,13 +20,13 @@ type Lead = {
   description: string
   status: string
   assigned_to: string | null
-  assigned_despachos: string[]
+  assigned_empresas: string[]
   created_at: string
   rgpd: boolean
   ip: string
 }
 
-type Despacho = {
+type empresa = {
   id: string
   name: string
   categories: string[]
@@ -90,9 +90,9 @@ function CatBadge({ cat }: { cat: string }) {
   )
 }
 
-export default function PanelDespacho() {
+export default function Panelempresa() {
   const [leads, setLeads] = useState<Lead[]>([])
-  const [despacho, setDespacho] = useState<Despacho | null>(null)
+  const [empresa, setempresa] = useState<empresa | null>(null)
   const [currentId, setCurrentId] = useState<string>('')
   const [selected, setSelected] = useState<Lead | null>(null)
   const [loading, setLoading] = useState(true)
@@ -106,10 +106,10 @@ export default function PanelDespacho() {
       const { data: { user } } = await supabaseClient.auth.getUser()
       if (!user) return
 
-      const res = await fetch(`/api/despachos?userId=${user.id}`)
-      const data: Despacho[] = await res.json()
+      const res = await fetch(`/api/empresas?userId=${user.id}`)
+      const data: empresa[] = await res.json()
       if (data.length) {
-        setDespacho(data[0])
+        setempresa(data[0])
         setCurrentId(data[0].id)
       }
     }
@@ -122,7 +122,7 @@ export default function PanelDespacho() {
   }, [])
 
   const myLeads = leads.filter(l =>
-    l.assigned_despachos?.includes(currentId) || l.assigned_to === currentId
+    l.assigned_empresas?.includes(currentId) || l.assigned_to === currentId
   )
 
   const filtered = myLeads.filter(l => {
@@ -151,9 +151,9 @@ export default function PanelDespacho() {
       const res = await fetch(`/api/leads/${leadId}/claim`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ despachoId: currentId })
+        body: JSON.stringify({ empresaId: currentId })
       })
-      if (!res.ok) { alert('Este lead ya fue reclamado por otro despacho'); return }
+      if (!res.ok) { alert('Este lead ya fue reclamado por otro empresa'); return }
       const updated = await fetch('/api/leads').then(r => r.json())
       setLeads(updated)
       setSelected(updated.find((l: Lead) => l.id === leadId) ?? null)
@@ -191,7 +191,7 @@ export default function PanelDespacho() {
           </div>
         </div>
 
-        {/* Despacho info */}
+        {/* empresa info */}
         <div style={{ padding: '16px 20px', borderBottom: '1px solid #F1F5F9' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 36, height: 36, background: '#EEF2FF', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -200,8 +200,8 @@ export default function PanelDespacho() {
               </svg>
             </div>
             <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{despacho?.name ?? 'Cargando...'}</div>
-              <div style={{ fontSize: 12, color: '#94A3B8' }}>{despacho?.location}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{empresa?.name ?? 'Cargando...'}</div>
+              <div style={{ fontSize: 12, color: '#94A3B8' }}>{empresa?.location}</div>
             </div>
           </div>
         </div>
@@ -219,11 +219,11 @@ export default function PanelDespacho() {
         </div>
 
         {/* Especialidades */}
-        {despacho && (
+        {empresa && (
           <div style={{ padding: '16px 20px', borderTop: '1px solid #F1F5F9' }}>
             <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Especialidades</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-              {despacho.categories.map(c => <CatBadge key={c} cat={c} />)}
+              {empresa.categories.map(c => <CatBadge key={c} cat={c} />)}
             </div>
           </div>
         )}
@@ -425,7 +425,7 @@ export default function PanelDespacho() {
 
                   {isClaimed && (
                     <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '12px 14px', textAlign: 'center', marginBottom: 16 }}>
-                      <p style={{ fontSize: 13, color: '#DC2626', fontWeight: 600 }}>Lead reclamado por otro despacho</p>
+                      <p style={{ fontSize: 13, color: '#DC2626', fontWeight: 600 }}>Lead reclamado por otro empresa</p>
                     </div>
                   )}
 

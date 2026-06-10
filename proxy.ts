@@ -25,7 +25,7 @@ export async function proxy(req: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession()
 
-  if (req.nextUrl.pathname.startsWith('/despacho') && !session) {
+  if (req.nextUrl.pathname.startsWith('/empresa') && !session) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
 
@@ -33,5 +33,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/despacho/:path*']
+  matcher: ['/empresa/:path*']
 }

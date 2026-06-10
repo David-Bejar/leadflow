@@ -26,7 +26,7 @@ export default function Login() {
       // Comprobar si es admin
       const isAdmin = data.user?.email === 'admin@leadflow.com'
       router.refresh()
-      router.push(isAdmin ? '/admin' : '/despacho')
+      router.push(isAdmin ? '/admin' : '/empresa')
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Credenciales incorrectas'
       setError(message)
@@ -102,7 +102,7 @@ export default function Login() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                placeholder="tu@despacho.com"
+                placeholder="tu@empresa.com"
                 style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1.5px solid #E2E8F0', fontSize: 14, outline: 'none', transition: 'border 0.15s', boxSizing: 'border-box' }}
                 onFocus={e => e.target.style.borderColor = '#6366F1'}
                 onBlur={e => e.target.style.borderColor = '#E2E8F0'}

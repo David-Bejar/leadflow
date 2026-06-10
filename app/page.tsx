@@ -238,7 +238,7 @@ export default function Home() {
                 <input type="checkbox" checked={form.rgpd} onChange={e => set('rgpd', e.target.checked)}
                   style={{ marginTop: 2, width: 16, height: 16, accentColor: '#6366F1', flexShrink: 0 }} />
                 <span style={{ fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
-                  Acepto que mis datos sean tratados conforme al <strong>Reglamento General de Protección de Datos (RGPD)</strong> y puedan ser cedidos a despachos colaboradores para gestionar mi solicitud. Los datos se registran con IP y marca temporal.
+                  Acepto que mis datos sean tratados conforme al <strong>Reglamento General de Protección de Datos (RGPD)</strong> y puedan ser cedidos a empresas colaboradores para gestionar mi solicitud. Los datos se registran con IP y marca temporal.
                 </span>
               </label>
               {errors.rgpd && <p style={{ color: '#EF4444', fontSize: 12, marginTop: 8, marginLeft: 28 }}>{errors.rgpd}</p>}

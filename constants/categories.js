@@ -14,7 +14,7 @@ export const STATUS_LABELS = {
   closed_lost: 'Cerrado ✗',
 }
 
-export const DESPACHOS = [
+export const empresaS = [
   { id: 'd1', name: 'Bufete García & Asociados', categories: ['Jurídico'],                 location: 'Madrid'    },
   { id: 'd2', name: 'Lex Inmobiliaria',          categories: ['Inmobiliario', 'Jurídico'], location: 'Madrid'    },
   { id: 'd3', name: 'Reformas Norte',            categories: ['Reformas'],                 location: 'Madrid'    },
