@@ -111,7 +111,7 @@ function AdminSidebar({
         )}
       </div>
 
-      <div style={{ padding: '12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+      <div style={{ padding: '12px', overflowY: 'auto', minHeight: 0, maxHeight: '60vh' }}>
         <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, paddingLeft: 8 }}>Navegación</p>
         {NAV.map(item => (
           <button key={item.id} onClick={() => { setSection(item.id); if (isCompact) setSidebarOpen(false) }}
@@ -197,13 +197,13 @@ export default function AdminPanel() {
       )}
 
       {!isCompact && (
-        <div style={{ width: 240, background: '#fff', borderRight: '1px solid #F1F5F9', flexShrink: 0, position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
+        <div style={{ width: 240, background: '#fff', borderRight: '1px solid #F1F5F9', flexShrink: 0, position: 'sticky', top: 0, height: '100dvh', overflow: 'hidden' }}>
           <AdminSidebar section={section} setSection={setSection} setSidebarOpen={setSidebarOpen} isCompact={isCompact} handleLogout={handleLogout} />
         </div>
       )}
 
       {isCompact && (
-        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100vh', background: '#fff', borderRight: '1px solid #F1F5F9', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none', overflow: 'hidden' }}>
+        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100dvh', background: '#fff', borderRight: '1px solid #F1F5F9', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none', overflow: 'hidden' }}>
           <AdminSidebar section={section} setSection={setSection} setSidebarOpen={setSidebarOpen} isCompact={isCompact} handleLogout={handleLogout} />
         </div>
       )}
