@@ -3,7 +3,7 @@ import { supabase } from '../../../../lib/supabase'
 export async function GET() {
   const [leadsRes, empresaRes] = await Promise.all([
     supabase.from('leads').select('*'),
-    supabase.from('empresas').select('*'),
+    supabase.from('despachos').select('*'),
   ])
 
   const leads = leadsRes.data ?? []

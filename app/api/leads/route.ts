@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
 
   const { data: empresas } = await supabase
-    .from('empresas')
+    .from('despachos')
     .select('id')
     .contains('categories', [body.category])
     .eq('active', true)
