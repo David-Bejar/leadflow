@@ -146,7 +146,7 @@ function Sidebar({
         </div>
       </div>
 
-      <div style={{ padding: '12px', flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: '12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
         <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, paddingLeft: 8 }}>Estado</p>
         {[{ k: '', label: 'Todos', count: items.length }, ...Object.entries(STATUS_LABELS).map(([k, label]) => ({ k, label, count: items.filter(i => i.status === k).length }))].map(({ k, label, count }) => (
           <button key={k} onClick={() => { setFilterStatus(k); if (isCompact) setSidebarOpen(false) }}
@@ -268,7 +268,7 @@ export default function PanelEmpresa() {
 
       {/* Sidebar móvil/tablet deslizable */}
       {isCompact && (
-        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100vh', background: '#fff', borderRight: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none' }}>
+        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100vh', background: '#fff', borderRight: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none', overflow: 'hidden' }}>
           <Sidebar despacho={despacho} activos={activos} limite={limite} items={items}
             filterStatus={filterStatus} setFilterStatus={setFilterStatus}
             setSidebarOpen={setSidebarOpen} isCompact={isCompact} handleLogout={handleLogout} />
