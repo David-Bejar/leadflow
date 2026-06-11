@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server'
 export async function GET() {
   const { data, error } = await supabase
     .from('leads')
-    .select('*, empresas(*)')
+    .select('*, despachos(*)')
     .order('created_at', { ascending: false })
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
@@ -14,14 +14,14 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const body = await request.json()
 
-  const { data: empresas } = await supabase
+  const { data: despachos } = await supabase
     .from('despachos')
     .select('id')
     .contains('categories', [body.category])
     .eq('active', true)
 
-  const shuffled = (empresas || []).sort(() => Math.random() - 0.5).slice(0, 4)
- const assignedIds = shuffled.map((d: { id: string }) => d.id)
+  const shuffled = (despachos || []).sort(() => Math.random() - 0.5).slice(0, 4)
+  const assignedIds = shuffled.map((d: { id: string }) => d.id)
 
   const leadId = 'L' + Math.floor(Math.random() * 9000 + 1000)
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       rgpd: body.rgpd,
       ip: body.ip,
       status: 'new',
-      assigned_empresas: assignedIds,
+      assigned_despachos: assignedIds,
     })
     .select()
     .single()
