@@ -8,19 +8,20 @@ export async function PATCH(
   const { id } = await params
   const body = await request.json()
 
-  const { data, error } = await supabase
-    .from('leads')
-    .update({ status: body.status })
-    .eq('id', id)
-    .select()
-    .single()
+  // Actualizar estado en lead_empresa para este despacho
+  const { error } = await supabase
+    .from('lead_empresa')
+    .update({ status: body.status, updated_at: new Date().toISOString() })
+    .eq('lead_id', id)
+    .eq('despacho_id', body.despachoId)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
 
   await supabase.from('lead_events').insert({
     lead_id: id,
     type: body.status,
+    despacho_id: body.despachoId,
   })
 
-  return Response.json(data)
+  return Response.json({ success: true })
 }

@@ -8,30 +8,20 @@ export async function POST(
   const { id } = await params
   const body = await request.json()
 
-  const { data: lead } = await supabase
-    .from('leads')
-    .select('assigned_to')
-    .eq('id', id)
-    .single()
-
-  if (lead?.assigned_to) {
-    return Response.json({ error: 'Lead ya reclamado' }, { status: 409 })
-  }
-
-  const { data, error } = await supabase
-    .from('leads')
-    .update({ assigned_to: body.empresaId, status: 'assigned' })
-    .eq('id', id)
-    .select()
-    .single()
+  // Marcar como contactado
+  const { error } = await supabase
+    .from('lead_empresa')
+    .update({ status: 'contacted', updated_at: new Date().toISOString() })
+    .eq('lead_id', id)
+    .eq('despacho_id', body.despachoId)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
 
   await supabase.from('lead_events').insert({
     lead_id: id,
-    type: 'claimed',
-    empresa_id: body.empresaId,
+    type: 'contacted',
+    despacho_id: body.despachoId,
   })
 
-  return Response.json(data)
+  return Response.json({ success: true })
 }
