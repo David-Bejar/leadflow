@@ -104,8 +104,9 @@ function Sidebar({
   handleLogout: () => void
 }) {
   return (
-    <>
-      <div style={{ padding: '24px 20px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+
+      <div style={{ padding: '24px 20px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
           <div style={{ width: 32, height: 32, background: '#6366F1', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -119,7 +120,7 @@ function Sidebar({
         )}
       </div>
 
-      <div style={{ padding: '16px 20px', borderBottom: '1px solid #F1F5F9' }}>
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid #F1F5F9', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 36, height: 36, background: '#EEF2FF', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -158,7 +159,7 @@ function Sidebar({
       </div>
 
       {despacho && (
-        <div style={{ padding: '16px 20px', borderTop: '1px solid #F1F5F9' }}>
+        <div style={{ padding: '16px 20px', borderTop: '1px solid #F1F5F9', flexShrink: 0 }}>
           <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Especialidades</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {despacho.categories.map(c => <CatBadge key={c} cat={c} />)}
@@ -166,7 +167,7 @@ function Sidebar({
         </div>
       )}
 
-      <div style={{ padding: '12px', borderTop: '1px solid #F1F5F9' }}>
+      <div style={{ padding: '12px', borderTop: '1px solid #F1F5F9', flexShrink: 0 }}>
         <button onClick={handleLogout}
           style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 7, border: 'none', cursor: 'pointer', background: 'transparent', color: '#94A3B8', fontSize: 13 }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -175,7 +176,8 @@ function Sidebar({
           Cerrar sesión
         </button>
       </div>
-    </>
+
+    </div>
   )
 }
 
@@ -251,34 +253,29 @@ export default function PanelEmpresa() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: "'Inter', sans-serif" }}>
 
-      {/* Overlay móvil sidebar */}
       {isCompact && sidebarOpen && (
         <div onClick={() => setSidebarOpen(false)}
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 40 }} />
       )}
 
-      {/* Sidebar desktop */}
       {!isCompact && (
-        <div style={{ width: 240, background: '#fff', borderRight: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', flexShrink: 0, position: 'sticky', top: 0, height: '100vh' }}>
+        <div style={{ width: 240, background: '#fff', borderRight: '1px solid #F1F5F9', flexShrink: 0, position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
           <Sidebar despacho={despacho} activos={activos} limite={limite} items={items}
             filterStatus={filterStatus} setFilterStatus={setFilterStatus}
             setSidebarOpen={setSidebarOpen} isCompact={isCompact} handleLogout={handleLogout} />
         </div>
       )}
 
-      {/* Sidebar móvil/tablet deslizable */}
       {isCompact && (
-        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100vh', background: '#fff', borderRight: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none', overflow: 'hidden' }}>
+        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100vh', background: '#fff', borderRight: '1px solid #F1F5F9', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none', overflow: 'hidden' }}>
           <Sidebar despacho={despacho} activos={activos} limite={limite} items={items}
             filterStatus={filterStatus} setFilterStatus={setFilterStatus}
             setSidebarOpen={setSidebarOpen} isCompact={isCompact} handleLogout={handleLogout} />
         </div>
       )}
 
-      {/* Main */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
 
-        {/* Topbar */}
         <div style={{ background: '#fff', borderBottom: '1px solid #F1F5F9', padding: isCompact ? '12px 16px' : '16px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {isCompact && (
@@ -304,7 +301,6 @@ export default function PanelEmpresa() {
           )}
         </div>
 
-        {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 10 : 16, padding: isCompact ? '12px 16px 0' : '20px 28px 0', flexShrink: 0 }}>
           {[
             { label: 'Total leads', val: items.length, sub: 'recibidos', color: '#6366F1', bg: '#EEF2FF',
@@ -327,7 +323,6 @@ export default function PanelEmpresa() {
           ))}
         </div>
 
-        {/* Search */}
         <div style={{ padding: isCompact ? '12px 16px 0' : '16px 28px 0', flexShrink: 0 }}>
           <div style={{ position: 'relative' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }}>
@@ -340,10 +335,8 @@ export default function PanelEmpresa() {
           </div>
         </div>
 
-        {/* Content */}
         <div style={{ flex: 1, display: 'flex', gap: 16, padding: isCompact ? '12px 16px 16px' : '16px 28px 24px', overflow: 'hidden', minHeight: 0 }}>
 
-          {/* Lista */}
           <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {loading ? (
               [1,2,3].map(i => <div key={i} style={{ background: '#fff', border: '1px solid #F1F5F9', borderRadius: 12, padding: '18px', height: 80 }} />)
@@ -388,7 +381,6 @@ export default function PanelEmpresa() {
             })}
           </div>
 
-          {/* Panel detalle */}
           {selected && (() => {
             const lead = selected.leads
 

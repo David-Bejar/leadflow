@@ -67,11 +67,6 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string; 
   closed_lost: { bg: '#FEF2F2', text: '#B91C1C', border: '#FECACA', dot: '#EF4444' },
 }
 
-const STATUS_LABELS_PIPELINE: Record<string, string> = {
-  new: 'Nuevo', distributed: 'Distribuido', contacted: 'Contactado',
-  in_progress: 'En progreso', closed_won: 'Cerrado ganado', closed_lost: 'Cerrado perdido',
-}
-
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('es-ES', {
     day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
@@ -89,6 +84,56 @@ const NAV = [
   { id: 'empresas', label: 'Empresas', icon: 'M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z' },
   { id: 'suscripciones', label: 'Suscripciones', icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
 ]
+
+function AdminSidebar({
+  section, setSection, setSidebarOpen, isCompact, handleLogout
+}: {
+  section: string
+  setSection: (s: string) => void
+  setSidebarOpen: (v: boolean) => void
+  isCompact: boolean
+  handleLogout: () => void
+}) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+      <div style={{ padding: isCompact ? '20px' : '24px 20px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+          <div style={{ width: 32, height: 32, background: '#6366F1', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div>
+            <span style={{ fontWeight: 800, fontSize: 16, color: '#0F172A' }}>LeadFlow</span>
+            <span style={{ display: 'block', fontSize: 11, color: '#94A3B8' }}>Administración</span>
+          </div>
+        </div>
+        {isCompact && (
+          <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', fontSize: 20 }}>✕</button>
+        )}
+      </div>
+
+      <div style={{ padding: '12px', flex: 1, overflowY: 'auto', minHeight: 0 }}>
+        <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, paddingLeft: 8 }}>Navegación</p>
+        {NAV.map(item => (
+          <button key={item.id} onClick={() => { setSection(item.id); if (isCompact) setSidebarOpen(false) }}
+            style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '10px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: isCompact ? 14 : 13, fontWeight: section === item.id ? 600 : 400, background: section === item.id ? '#EEF2FF' : 'transparent', color: section === item.id ? '#6366F1' : '#64748B', marginBottom: 2 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.icon}/></svg>
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding: '12px', borderTop: '1px solid #F1F5F9', flexShrink: 0 }}>
+        <button onClick={handleLogout}
+          style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 7, border: 'none', cursor: 'pointer', background: 'transparent', color: '#94A3B8', fontSize: 13 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export default function AdminPanel() {
   const { isMobile, isTablet } = useWindowSize()
@@ -146,88 +191,25 @@ export default function AdminPanel() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: "'Inter', sans-serif" }}>
 
-      {/* Overlay móvil */}
       {isCompact && sidebarOpen && (
         <div onClick={() => setSidebarOpen(false)}
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 40 }} />
       )}
 
-      {/* Sidebar desktop */}
       {!isCompact && (
-        <div style={{ width: 240, background: '#fff', borderRight: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', flexShrink: 0, position: 'sticky', top: 0, height: '100vh' }}>
-          <div style={{ padding: '24px 20px', borderBottom: '1px solid #F1F5F9' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <div style={{ width: 32, height: 32, background: '#6366F1', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              </div>
-              <div>
-                <span style={{ fontWeight: 800, fontSize: 16, color: '#0F172A' }}>LeadFlow</span>
-                <span style={{ display: 'block', fontSize: 11, color: '#94A3B8' }}>Administración</span>
-              </div>
-            </div>
-          </div>
-          <div style={{ padding: '12px', flex: 1 }}>
-            <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, paddingLeft: 8 }}>Navegación</p>
-            {NAV.map(item => (
-              <button key={item.id} onClick={() => setSection(item.id)}
-                style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '9px 10px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: section === item.id ? 600 : 400, background: section === item.id ? '#EEF2FF' : 'transparent', color: section === item.id ? '#6366F1' : '#64748B', marginBottom: 2 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.icon}/></svg>
-                {item.label}
-              </button>
-            ))}
-          </div>
-          <div style={{ padding: '12px', borderTop: '1px solid #F1F5F9' }}>
-            <button onClick={handleLogout}
-              style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 7, border: 'none', cursor: 'pointer', background: 'transparent', color: '#94A3B8', fontSize: 13 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-              Cerrar sesión
-            </button>
-          </div>
+        <div style={{ width: 240, background: '#fff', borderRight: '1px solid #F1F5F9', flexShrink: 0, position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
+          <AdminSidebar section={section} setSection={setSection} setSidebarOpen={setSidebarOpen} isCompact={isCompact} handleLogout={handleLogout} />
         </div>
       )}
 
-      {/* Sidebar móvil deslizable */}
       {isCompact && (
-        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100vh', background: '#fff', borderRight: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none' }}>
-          <div style={{ padding: '20px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <div style={{ width: 32, height: 32, background: '#6366F1', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              </div>
-              <div>
-                <span style={{ fontWeight: 800, fontSize: 16, color: '#0F172A' }}>LeadFlow</span>
-                <span style={{ display: 'block', fontSize: 11, color: '#94A3B8' }}>Administración</span>
-              </div>
-            </div>
-            <button onClick={() => setSidebarOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', fontSize: 20 }}>✕</button>
-          </div>
-          <div style={{ padding: '12px', flex: 1 }}>
-            {NAV.map(item => (
-              <button key={item.id} onClick={() => { setSection(item.id); setSidebarOpen(false) }}
-                style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 10, padding: '10px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: section === item.id ? 600 : 400, background: section === item.id ? '#EEF2FF' : 'transparent', color: section === item.id ? '#6366F1' : '#64748B', marginBottom: 4 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={item.icon}/></svg>
-                {item.label}
-              </button>
-            ))}
-          </div>
-          <div style={{ padding: '12px', borderTop: '1px solid #F1F5F9' }}>
-            <button onClick={handleLogout}
-              style={{ display: 'flex', width: '100%', alignItems: 'center', gap: 8, padding: '10px', borderRadius: 7, border: 'none', cursor: 'pointer', background: 'transparent', color: '#94A3B8', fontSize: 14 }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-              Cerrar sesión
-            </button>
-          </div>
+        <div style={{ position: 'fixed', top: 0, left: sidebarOpen ? 0 : '-280px', width: 280, height: '100vh', background: '#fff', borderRight: '1px solid #F1F5F9', zIndex: 50, transition: 'left 0.25s ease', boxShadow: sidebarOpen ? '4px 0 24px rgba(0,0,0,0.1)' : 'none', overflow: 'hidden' }}>
+          <AdminSidebar section={section} setSection={setSection} setSidebarOpen={setSidebarOpen} isCompact={isCompact} handleLogout={handleLogout} />
         </div>
       )}
 
-      {/* Main */}
       <div style={{ flex: 1, overflow: 'auto', minWidth: 0 }}>
 
-        {/* Topbar */}
         <div style={{ background: '#fff', borderBottom: '1px solid #F1F5F9', padding: isCompact ? '12px 16px' : '16px 28px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 10 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {isCompact && (
@@ -263,7 +245,6 @@ export default function AdminPanel() {
             </div>
           ) : !stats ? null : (
             <>
-              {/* OVERVIEW */}
               {section === 'overview' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2,1fr)' : 'repeat(4,1fr)', gap: isMobile ? 10 : 16 }}>
@@ -340,7 +321,6 @@ export default function AdminPanel() {
                 </div>
               )}
 
-              {/* LEADS */}
               {section === 'leads' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <div style={{ position: 'relative' }}>
@@ -353,18 +333,43 @@ export default function AdminPanel() {
                   </div>
 
                   {isMobile ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {filteredLeads.map(lead => (
-                        <div key={lead.id} onClick={() => setSelectedLead(selectedLead?.id === lead.id ? null : lead)}
-                          style={{ background: '#fff', border: `1.5px solid ${selectedLead?.id === lead.id ? '#6366F1' : '#F1F5F9'}`, borderRadius: 12, padding: '14px', cursor: 'pointer' }}>
-                          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}>
-                            <span style={{ fontWeight: 700, color: '#0F172A', fontSize: 14 }}>{lead.name}</span>
-                            <CatBadge cat={lead.category} />
+                    <>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {filteredLeads.map(lead => (
+                          <div key={lead.id} onClick={() => setSelectedLead(selectedLead?.id === lead.id ? null : lead)}
+                            style={{ background: '#fff', border: `1.5px solid ${selectedLead?.id === lead.id ? '#6366F1' : '#F1F5F9'}`, borderRadius: 12, padding: '14px', cursor: 'pointer' }}>
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}>
+                              <span style={{ fontWeight: 700, color: '#0F172A', fontSize: 14 }}>{lead.name}</span>
+                              <CatBadge cat={lead.category} />
+                            </div>
+                            <div style={{ fontSize: 12, color: '#64748B' }}>{lead.location} · {new Date(lead.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</div>
                           </div>
-                          <div style={{ fontSize: 12, color: '#64748B' }}>{lead.location} · {new Date(lead.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                      {selectedLead && (
+                        <>
+                          <div onClick={() => setSelectedLead(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 40 }} />
+                          <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#fff', borderRadius: '16px 16px 0 0', zIndex: 50, maxHeight: '80vh', overflowY: 'auto', padding: '20px', boxShadow: '0 -4px 24px rgba(0,0,0,0.1)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
+                              <span style={{ fontSize: 11, color: '#94A3B8', fontFamily: 'monospace' }}>{selectedLead.id}</span>
+                              <button onClick={() => setSelectedLead(null)} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 6, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                              </button>
+                            </div>
+                            <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginBottom: 8 }}>{selectedLead.name}</h3>
+                            <CatBadge cat={selectedLead.category} />
+                            <div style={{ display: 'flex', flexDirection: 'column', marginTop: 14 }}>
+                              {[['Teléfono', selectedLead.phone], ['Email', selectedLead.email], ['Localización', selectedLead.location], ['Recibido', fmtDate(selectedLead.created_at)]].map(([label, value]) => (
+                                <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid #F8FAFC', fontSize: 13 }}>
+                                  <span style={{ color: '#94A3B8' }}>{label}</span>
+                                  <span style={{ color: '#0F172A', fontWeight: 500 }}>{value}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </>
                   ) : (
                     <div style={{ display: 'flex', gap: 16 }}>
                       <div style={{ flex: 1 }}>
@@ -425,35 +430,9 @@ export default function AdminPanel() {
                       )}
                     </div>
                   )}
-
-                  {/* Detalle móvil como bottom sheet */}
-                  {isMobile && selectedLead && (
-                    <>
-                      <div onClick={() => setSelectedLead(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 40 }} />
-                      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, background: '#fff', borderRadius: '16px 16px 0 0', zIndex: 50, maxHeight: '80vh', overflowY: 'auto', padding: '20px', boxShadow: '0 -4px 24px rgba(0,0,0,0.1)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
-                          <span style={{ fontSize: 11, color: '#94A3B8', fontFamily: 'monospace' }}>{selectedLead.id}</span>
-                          <button onClick={() => setSelectedLead(null)} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 6, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                          </button>
-                        </div>
-                        <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginBottom: 8 }}>{selectedLead.name}</h3>
-                        <CatBadge cat={selectedLead.category} />
-                        <div style={{ display: 'flex', flexDirection: 'column', marginTop: 14 }}>
-                          {[['Teléfono', selectedLead.phone], ['Email', selectedLead.email], ['Localización', selectedLead.location], ['Recibido', fmtDate(selectedLead.created_at)]].map(([label, value]) => (
-                            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid #F8FAFC', fontSize: 13 }}>
-                              <span style={{ color: '#94A3B8' }}>{label}</span>
-                              <span style={{ color: '#0F172A', fontWeight: 500 }}>{value}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
                 </div>
               )}
 
-              {/* EMPRESAS */}
               {section === 'empresas' && (
                 isMobile ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -472,7 +451,7 @@ export default function AdminPanel() {
                         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 10 }}>
                           {d.categories.map(c => <CatBadge key={c} cat={c} />)}
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
                           <div style={{ fontSize: 12, color: '#64748B' }}>
                             Cola: <strong>{d.activos}/{d.max_leads_activos || 5}</strong> · Cerrados: <strong style={{ color: '#059669' }}>{d.cerrados}</strong>
                           </div>
@@ -566,7 +545,6 @@ export default function AdminPanel() {
                 )
               )}
 
-              {/* SUSCRIPCIONES */}
               {section === 'suscripciones' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)', gap: 12 }}>
@@ -649,13 +627,6 @@ export default function AdminPanel() {
                       </table>
                     )}
                   </div>
-                </div>
-              )}
-
-              {/* Pipeline labels usado solo en overview */}
-              {section === 'overview' && (
-                <div style={{ display: 'none' }}>
-                  {Object.entries(STATUS_LABELS_PIPELINE).map(([k, v]) => <span key={k}>{v}</span>)}
                 </div>
               )}
             </>
