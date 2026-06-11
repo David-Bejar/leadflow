@@ -20,7 +20,7 @@ type Lead = {
   description: string
   status: string
   assigned_to: string | null
-  assigned_empresas: string[]
+  assigned_despachos: string[]
   created_at: string
   rgpd: boolean
   ip: string
@@ -106,7 +106,7 @@ export default function Panelempresa() {
       const { data: { user } } = await supabaseClient.auth.getUser()
       if (!user) return
 
-      const res = await fetch(`/api/empresas?userId=${user.id}`)
+      const res = await fetch(`/api/despachos?userId=${user.id}`)
       const data: empresa[] = await res.json()
       if (data.length) {
         setempresa(data[0])
@@ -122,7 +122,7 @@ export default function Panelempresa() {
   }, [])
 
   const myLeads = leads.filter(l =>
-    l.assigned_empresas?.includes(currentId) || l.assigned_to === currentId
+    l.assigned_despachos?.includes(currentId) || l.assigned_to === currentId
   )
 
   const filtered = myLeads.filter(l => {
@@ -151,7 +151,7 @@ export default function Panelempresa() {
       const res = await fetch(`/api/leads/${leadId}/claim`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ empresaId: currentId })
+        body: JSON.stringify({ despachoId: currentId })
       })
       if (!res.ok) { alert('Este lead ya fue reclamado por otro empresa'); return }
       const updated = await fetch('/api/leads').then(r => r.json())
